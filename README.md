@@ -19,54 +19,14 @@ npm i @thecrazyinsanity2/clydeapi
 ```
 - Usage example:
 ```javascript
-const {
-    askClyde,
-    createChannel,
-    deleteChannel,
-    listChannels,
-    deleteChannelsWithDelay,
-    editPersonality
-  } = require(@thecrazyinsanity2/clydeapi);
-  
-  const token = 'Your Discord Token Authorization';
-  const guildId = 'Your Discord server ID';
-  const parentId = null; // Your 'Text Channel' Channel ID (Optional)
-  const personality = 'Clyde is an helpful assistant';
-  const channelName = 'testing';
-  
-  async function processChannels() {
-    try {
-      const channels = await listChannels(guildId, parentId, token);
-      const matchingChannels = channels.filter(channel => channel.name === channelName);
-      let deleteChannelsCalled = false; // make sure to run it only once
+const token="user token here"
+const guildid="guild id here"
+const catid="category id here"
 
-      if (matchingChannels.length > 0) {
-        const channelIds = matchingChannels.map(channel => channel.id);
-        
-        const response = await askClyde('@Clyde Im fine thank you', token, channelIds);
-        console.log(response);
-        if (!deleteChannelsCalled) {
-            await deleteChannelsWithDelay(10000, channelIds, token); // delete channel in 10 seconds
-            deleteChannelsCalled = true;
-        }
-      } else {
-        const channelId = await createChannel(guildId, parentId, channelName, token);
-        console.log('New channel created with ID:', channelId);
-        const response = await askClyde('@Clyde Hello Clyde', token, channelId);
-        console.log(response);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-
-editPersonality(personality, guildId, token)
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error("Error:", error.message);
-  });
-
-processChannels();
+const clydeapi = require("./index.js")
+clydeapi.promMultiAsk(guildid, catid, "Wow! What a great example script for clydeapi!", token).then(value => {
+    console.log("Clyde says: " + value)
+}).catch(error => {
+    console.log(error)
+})
 ```
