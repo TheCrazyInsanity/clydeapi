@@ -1,6 +1,6 @@
 {
   "name": "@thecrazyinsanity2/clydeapi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A basic unofficial api to interact with discords AI, clyde.",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/thecrazyinsanity/clydeapi#readme",
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "uuid": "^9.0.0"
   }
 }

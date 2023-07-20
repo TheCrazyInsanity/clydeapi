@@ -1,4 +1,5 @@
 const axios = require("axios")
+const uuid = require("uuid")
 
 function getLastMessage(token, channelid){
     let promise = new Promise(function(resolve, reject) {
@@ -191,7 +192,7 @@ async function deleteChannelsWithDelay(delayDuration, channelIds, token) {
 
 function askClyde(prompt, token, channelid){
     let promise = new Promise(function(resolve, reject) {
-        sendMessage(prompt, token, channelid).then((response) =>{
+        sendMessage("@Clyde " + prompt, token, channelid).then((response) =>{
             console.log("sent message")
             function dotheshit(){
                 getLastMessage(token, channelid).then((response) => {
@@ -203,7 +204,7 @@ function askClyde(prompt, token, channelid){
                     }
                 })
             }
-            setTimeout(dotheshit, 2000)
+            setTimeout(dotheshit, 1000)
         })
     })
     return promise //🤓
@@ -235,6 +236,19 @@ function editPersonality(prompt, guildId, token) {
   return axios(config);
 }
 
+function syncMultiAsk(guildid, parentid, prompt, token){
+  createChannel(guildid, parentid, uuid.v4(), token).then((value)=>{
+      console.log(value)
+      askClyde(prompt, token, value).then((value2)=>{
+          console.log(value2)
+          deleteChannel(value, token).then((value3) =>{
+              console.log(value3)
+              return value2
+          })
+      })
+  })
+}
+
 module.exports = {
   askClyde,
   createChannel,
@@ -242,5 +256,6 @@ module.exports = {
   deleteChannel,
   deleteChannelsWithDelay,
   delay,
-  listChannels
+  listChannels,
+  syncMultiAsk
 };
