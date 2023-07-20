@@ -274,5 +274,6 @@ module.exports = {
   delay,
   listChannels,
   syncMultiAsk,
-  promMultiAsk
+  promMultiAsk,
+  sendMessage
 };
