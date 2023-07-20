@@ -26,7 +26,7 @@ const {
     listChannels,
     deleteChannelsWithDelay,
     editPersonality
-  } = require('./path/to/js/file');
+  } = require(@thecrazyinsanity2/clydeapi);
   
   const token = 'Your Discord Token Authorization';
   const guildId = 'Your Discord server ID';
