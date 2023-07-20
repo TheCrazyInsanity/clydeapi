@@ -249,6 +249,22 @@ function syncMultiAsk(guildid, parentid, prompt, token){
   })
 }
 
+function promMultiAsk(guildid, parentid, prompt, token){
+  let promise = new Promise(function(resolve, reject) {
+  createChannel(guildid, parentid, uuid.v4(), token).then((value)=>{
+      console.log(value)
+      askClyde(prompt, token, value).then((value2)=>{
+          console.log(value2)
+          deleteChannel(value, token).then((value3) =>{
+              console.log(value3)
+              resolve(value2)
+          })
+      })
+  })
+  })
+  return promise
+}
+
 module.exports = {
   askClyde,
   createChannel,
@@ -257,5 +273,6 @@ module.exports = {
   deleteChannelsWithDelay,
   delay,
   listChannels,
-  syncMultiAsk
+  syncMultiAsk,
+  promMultiAsk
 };
