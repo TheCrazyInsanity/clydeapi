@@ -11,7 +11,7 @@ channelid: The channel id with which to send the messages, i reccommend this cha
 It then returns a promise that resolves to a string containing clydes exact response.
 
 Current issues:
-Cant have two messages at once in the same channel, this can be solved by creating many channels and rotating between them however this is obviously not ideal
+Cant have two messages pending at once in the same channel, this is solved by making many different channels then deleting them when finished, similar to chats with openai.
 
 To install:
 ```bash
