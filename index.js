@@ -92,6 +92,103 @@ function sendMessage(message, token, channelid){
     return promise
 }
 
+function createChannel(guildId, parentId, channelName, token) {
+  let promise = new Promise(function(resolve, reject) {
+      let data = JSON.stringify({
+          "type": 0,  // 0 is a text channel
+          "name": channelName,
+          "permission_overwrites": [],
+          "parent_id": parentId
+      });
+
+      let config = {
+          method: 'post',
+          url: `https://discord.com/api/v9/guilds/${guildId}/channels`,
+          headers: { 
+              'Authorization': token, 
+              'Content-Type': 'application/json',
+              'X-Discord-Timezone': 'Asia/Barnaul',
+              'X-Discord-Locale': 'en-US',
+              // Include any other headers as needed
+          },
+          data: data
+      };
+    
+      axios.request(config)
+      .then((response) => {
+          resolve(response.data.id);  // resolve the promise with the channel ID
+      })
+      .catch((error) => {
+          reject("error " + error);
+      });
+  });
+
+  return promise;
+}
+
+function listChannels(guildId, parentId, token) {
+  let promise = new Promise(function(resolve, reject) {
+      let config = {
+          method: 'get',
+          url: `https://discord.com/api/v9/guilds/${guildId}/channels`,
+          headers: { 
+              'Authorization': token, 
+              // Include any other headers as needed
+          }
+      };
+    
+      axios.request(config)
+      .then((response) => {
+          // Filter channels by parentId and resolve the promise with the result
+          const channelsInCategory = response.data.filter(channel => channel.parent_id === parentId);
+          resolve(channelsInCategory);
+      })
+      .catch((error) => {
+          reject("error " + error);
+      });
+  });
+
+  return promise;
+}
+
+function deleteChannel(channelId, token) {
+  let promise = new Promise(function(resolve, reject) {
+      let config = {
+          method: 'delete',
+          url: `https://discord.com/api/v9/channels/${channelId}`,
+          headers: { 
+              'Authorization': token, 
+              'X-Discord-Timezone': 'Asia/Barnaul',
+              'X-Discord-Locale': 'en-US',
+              // Include any other headers as needed
+          }
+      };
+    
+      axios.request(config)
+      .then((response) => {
+          resolve('Channel deleted successfully');  // resolve the promise with a success message
+      })
+      .catch((error) => {
+          reject("Error: " + error);
+      });
+  });
+
+  return promise;
+}
+
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
+async function deleteChannelsWithDelay(delayDuration, channelIds, token) {
+  for (let id of channelIds) {
+    await delay(delayDuration);
+    deleteChannel(id, token)
+      .then(message => console.log(message))
+      .catch(error => console.error(error));
+  }
+}
+
 function askClyde(prompt, token, channelid){
     let promise = new Promise(function(resolve, reject) {
         sendMessage(prompt, token, channelid).then((response) =>{
@@ -112,4 +209,38 @@ function askClyde(prompt, token, channelid){
     return promise //🤓
 }
 
-exports.askClyde = askClyde
+function editPersonality(prompt, guildId, token) {
+  if (prompt.length > 500) {
+    throw new Error('Prompt must be <=500 characters');
+  }
+
+  let data = JSON.stringify({
+    "personality": prompt
+  });
+
+  let config = {
+    method: 'patch',
+    url: `https://discord.com/api/v9/guilds/${guildId}/clyde-settings`,
+    headers: { 
+      'accept': '*/*',
+      'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6,zh;q=0.5',
+      'authorization': token,
+      'content-type': 'application/json',
+      'x-discord-locale': 'en-US',
+      'x-discord-timezone': 'Asia/Barnaul',
+    },
+    data: data
+  };
+
+  return axios(config);
+}
+
+module.exports = {
+  askClyde,
+  createChannel,
+  editPersonality,
+  deleteChannel,
+  deleteChannelsWithDelay,
+  delay,
+  listChannels
+};
